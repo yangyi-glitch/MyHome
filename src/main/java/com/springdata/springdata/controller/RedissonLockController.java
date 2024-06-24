@@ -2,6 +2,7 @@ package com.springdata.springdata.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class RedissonLockController {
 
     @ApiOperation("redis可重入锁")
     @PostMapping("/testRedisLock")
-    public String saveUser(@RequestParam("name") String name){
+    public String saveUser(@ApiParam("拿锁人") @RequestParam("name") String name){
         lock = redissonClient.getLock(name);
         boolean b = lock.tryLock();
         if (!b){
