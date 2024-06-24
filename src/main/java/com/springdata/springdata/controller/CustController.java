@@ -1,6 +1,6 @@
 package com.springdata.springdata.controller;
 
-import com.springdata.springdata.dto.CotsDTO;
+import com.springdata.springdata.dto.CustDTO;
 import com.springdata.springdata.entity.Customer;
 import com.springdata.springdata.service.CustomerService;
 import com.springdata.springdata.utils.Result;
@@ -15,14 +15,14 @@ import java.util.List;
 @Api(tags = "顾客管理接口")
 @RequestMapping("/users")
 @RestController
-public class CotsController {
+public class CustController {
     @Autowired
     private CustomerService customerService;
 
     @ApiOperation("保存顾客")
     @PostMapping("/saveCots")
-    public String saveCots(@RequestBody CotsDTO cotsDTO){
-        String res = customerService.saveCots(cotsDTO);
+    public String saveCots(@RequestBody CustDTO custDTO){
+        String res = customerService.saveCots(custDTO);
         return res;
     }
 
@@ -55,5 +55,12 @@ public class CotsController {
     public String deleteById(@ApiParam("顾客id") @RequestParam(value = "id",required = false) Integer id){
         String res = customerService.deleteById(id);
         return res;
+    }
+
+    @ApiOperation("redis根据姓名查顾客")
+    @PostMapping("/redisQueByName")
+    public CustDTO redisQueByName(@ApiParam("顾客姓名") @RequestParam("name") String name){
+        CustDTO custDTO = customerService.redisQueByName(name);
+        return custDTO;
     }
 }
