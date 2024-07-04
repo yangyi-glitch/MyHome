@@ -20,15 +20,15 @@ public class Knife4jConfig {
         docket.apiInfo(new ApiInfoBuilder()
                 .description("# Knife4j RESTful APIs")
                 .termsOfServiceUrl("https://doc.xiaominfo.com/")
-                .contact(new Contact("杨溢","www.yangyi.com","110@phone.com"))
+                .contact(new Contact("杨溢", "www.yangyi.com", "110@phone.com"))
                 .version("1.0")
                 .build())
 
-        .groupName("用户服务")
-        .select()
-        .apis(RequestHandlerSelectors.basePackage("com.springdata.springdata.controller"))
-        .paths(PathSelectors.any())
-        .build();
+                .groupName("用户服务")
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.springdata.springdata.controller"))
+                .paths(PathSelectors.any())
+                .build();
         return docket;
     }
 }
