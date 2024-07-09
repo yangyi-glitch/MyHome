@@ -22,7 +22,7 @@ public class RedissonLockController {
 
     @ApiOperation("redis可重入锁")
     @PostMapping("/testRedisLock")
-    public String saveUser(@ApiParam("拿锁人") @RequestParam("name") String name) {
+    public synchronized String saveUser(@ApiParam("拿锁人") @RequestParam("name") String name) {
         lock = redissonClient.getLock(name);
         boolean b = lock.tryLock();
         if (!b) {
