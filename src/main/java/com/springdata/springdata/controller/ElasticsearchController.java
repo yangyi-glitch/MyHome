@@ -25,12 +25,19 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.springdata.springdata.utils.ElasticsearchKey.MAPPING_TEMPLATE;
 
@@ -158,6 +165,60 @@ public class ElasticsearchController {
             CustDTO custDTO = JSON.parseObject(source, CustDTO.class);
             custDTOS.add(custDTO);
         }
+        return custDTOS;
+    }
+
+    @ApiOperation("叶子查询-MatchAll")
+    @PostMapping("/MatchAll")
+    public List<CustDTO> MatchAll() throws IOException {
+        List<CustDTO> custDTOS = new ArrayList<>();
+        //创建request对象
+        SearchRequest request = new SearchRequest("cust");
+
+        request.source().query(QueryBuilders.matchAllQuery()).size(20);
+
+        SearchResponse search = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+
+        SearchHits hits = search.getHits();
+
+        SearchHit[] hits1 = hits.getHits();
+        for (SearchHit e : hits) {
+            String source = e.getSourceAsString();
+            CustDTO custDTO = JSON.parseObject(source, CustDTO.class);
+            custDTOS.add(custDTO);
+        }
+
+        return custDTOS;
+    }
+
+    @ApiOperation("叶子查询-aggMatchAll")
+    @PostMapping("/aggMatchAll")
+    public List<CustDTO> aggMatchAll() throws IOException {
+        List<CustDTO> custDTOS = new ArrayList<>();
+        //创建request对象
+        SearchRequest request = new SearchRequest("cust");
+
+        request.source().size(0);
+        request.source().aggregation(AggregationBuilders.terms("aggNames").field("custName").size(20));
+
+        SearchResponse search = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+        Aggregations aggregations = search.getAggregations();
+        Terms aggNames = aggregations.get("aggNames");
+        List<? extends Terms.Bucket> buckets = aggNames.getBuckets();
+        Terms.Bucket bucket = buckets.get(0);
+        String keyAsString = bucket.getKeyAsString();
+        long docCount = bucket.getDocCount();
+
+
+        SearchHits hits = search.getHits();
+
+/*        SearchHit[] hits1 = hits.getHits();
+        for (SearchHit e : hits) {
+            String source = e.getSourceAsString();
+            CustDTO custDTO = JSON.parseObject(source, CustDTO.class);
+            custDTOS.add(custDTO);
+        }*/
+
         return custDTOS;
     }
 }

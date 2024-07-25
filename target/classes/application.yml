@@ -25,8 +25,20 @@ spring:
     virtual-host: /
     username: yangyi
     password: 123456
+    connection-timeout: 1S
+    template:
+      retry:
+        enabled: true
+        multiplier: 2
+    publisher-confirm-type: correlated #simple：同步阻塞等待MQ的回执消息；correlated：异步
+    publisher-returns: true
 #  cloud:
 #    nacos:
 #      server-addr: 192.168.153.218:8848
 #      discovery:
 #        ephemeral: false
+logging:
+  pattern:
+    dateformat: MM-dd HH:mm:ss:SSS
+  level:
+    com.springdata.springdata: debug
