@@ -26,24 +26,4 @@ public class Customer {
 
     @Column(name = "cust_address")
     private String custAddress;
-
-    public static void main(String[] args) {
-        int[] a = {2,5,4,6,8,1,2,6,4,4};
-        int n = a.length;
-        while (n>0){
-            for (int i=0;i<n-1;i++){
-                if (a[i]>a[i+1]){
-                    int value = a[i];
-                    a[i] = a[i+1];
-                    a[i+1] = value;
-                }
-            }
-            n--;
-        }
-        System.out.print("[");
-        for(int e:a){
-            System.out.print(e+",");
-        }
-        System.out.println("]");
-    }
 }
