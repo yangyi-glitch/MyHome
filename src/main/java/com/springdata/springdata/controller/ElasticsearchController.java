@@ -31,6 +31,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -191,14 +192,13 @@ public class ElasticsearchController {
         return custDTOS;
     }
 
-    @ApiOperation("叶子查询-aggMatchAll")
+    @ApiOperation("聚合查询-aggMatchAll")
     @PostMapping("/aggMatchAll")
     public List<CustDTO> aggMatchAll() throws IOException {
         List<CustDTO> custDTOS = new ArrayList<>();
         //创建request对象
         SearchRequest request = new SearchRequest("cust");
 
-        request.source().size(0);
         request.source().aggregation(AggregationBuilders.terms("aggNames").field("custName").size(20));
 
         SearchResponse search = restHighLevelClient.search(request, RequestOptions.DEFAULT);
@@ -212,12 +212,49 @@ public class ElasticsearchController {
 
         SearchHits hits = search.getHits();
 
-/*        SearchHit[] hits1 = hits.getHits();
-        for (SearchHit e : hits) {
-            String source = e.getSourceAsString();
-            CustDTO custDTO = JSON.parseObject(source, CustDTO.class);
+        SearchHit[] hits1 = hits.getHits();
+//        for (SearchHit e : hits) {
+//            String source = e.getSourceAsString();
+//            CustDTO custDTO = JSON.parseObject(source, CustDTO.class);
+//            custDTOS.add(custDTO);
+//        }
+
+        for (SearchHit documentFields : hits1) {
+            String sourceAsString = documentFields.getSourceAsString();
+            CustDTO custDTO = JSONUtil.toBean(sourceAsString, CustDTO.class);
             custDTOS.add(custDTO);
-        }*/
+        }
+        return custDTOS;
+    }
+
+    @ApiOperation("叶子查询-MatchOther")
+    @PostMapping("/MatchOther")
+    public List<CustDTO> MatchOther() throws IOException {
+        List<CustDTO> custDTOS = new ArrayList<>();
+        //创建request对象
+        SearchRequest request = new SearchRequest("cust");
+        request.source().query(QueryBuilders.matchQuery("custAddress","北京"));
+
+        request.source().highlighter(SearchSourceBuilder.highlight()
+                .field("custAddress")
+                .postTags("<em>")
+                .preTags("</em>"))
+                .size(20);
+
+        SearchResponse search = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+
+        SearchHits hits = search.getHits();
+
+        SearchHit[] hits1 = hits.getHits();
+        for (SearchHit e : hits1) {
+            String source = e.getSourceAsString();
+            Map<String, HighlightField> highlightFields = e.getHighlightFields();
+            HighlightField name = highlightFields.get("custAddress");
+            CustDTO custDTO = JSON.parseObject(source, CustDTO.class);
+            String s = name.getFragments()[0].string();
+            custDTO.setCustAddress(s);
+            custDTOS.add(custDTO);
+        }
 
         return custDTOS;
     }
