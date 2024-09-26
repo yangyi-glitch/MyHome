@@ -30,7 +30,7 @@ spring:
       retry:
         enabled: true
         multiplier: 2
-    publisher-confirm-type: correlated #simple：同步阻塞等待MQ的回执消息；correlated：异步
+    publisher-confirm-type: correlated #simple：同步阻塞等待MQ的回执消息；correlated：异步【开启消息发送者确认】
     publisher-returns: true
 #  cloud:
 #    nacos:

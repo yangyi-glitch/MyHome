@@ -6,6 +6,8 @@ import com.springdata.springdata.dto.CustDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +119,7 @@ public class MQController {
                     log.log(Level.WARNING,"消息发送成功");
                     System.out.println("消息发送成功，收到ACK");
                 }else{
-                    System.out.println("消息发送失败，收到NACK，原因【】"+result.getReason());
+                    System.out.println("消息发送失败，收到NACK，原因{}"+result.getReason());
                 }
             }
         });

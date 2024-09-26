@@ -15,6 +15,8 @@ public class SpringdataApplication {
 
     @Bean
     public MessageConverter jacksonMessageConverter(){
-        return new Jackson2JsonMessageConverter();
+        Jackson2JsonMessageConverter jjcc = new Jackson2JsonMessageConverter();
+        jjcc.setCreateMessageIds(true);
+        return jjcc;
     }
 }
