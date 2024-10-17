@@ -19,10 +19,6 @@ import java.util.Map;
 @RequestMapping("/users")
 @RestController
 public class CustController {
-
-
-
-
     @Autowired
     private CustomerService customerService;
 
